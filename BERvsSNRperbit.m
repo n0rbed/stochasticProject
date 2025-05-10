@@ -8,7 +8,7 @@ EbN0_linear = 10.^(EbN0_db/10);
 % random bits
 s = randi([0,1], num_symbols*bits_per_symbol, 1);
 s_insymbols = bit2int(s, bits_per_symbol);
-s_mapped = real(pammod(s_insymbols, M));
+s_mapped = real(pammod(s_insymbols,M,0, 'bin'));
 signal_power = mean(abs(s_mapped).^2);
 
 BER = zeros(size(EbN0_db));
@@ -20,7 +20,7 @@ for i = 1:length(EbN0_db)
     [~, BER(i)] = biterr(s, int2bit(pamdemod(r, M), bits_per_symbol));
 end
 
-theorBER = (2*(M-1))/(M*log2(M))*qfunc(sqrt(((6*log2(M))/(M^2 - 1))*EbN0_linear));
+theorBER = berawgn(EbN0_db, 'pam', M);
 figure;
 semilogy(EbN0_db, BER, 'bo-', 'LineWidth', 1, 'MarkerFaceColor', 'b');
 hold on;
